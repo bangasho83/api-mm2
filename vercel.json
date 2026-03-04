@@ -30,6 +30,18 @@
   ],
   "rewrites": [
     {
+      "source": "/apidocs",
+      "destination": "/api-docs/index.html"
+    },
+    {
+      "source": "/apidocs/",
+      "destination": "/api-docs/index.html"
+    },
+    {
+      "source": "/apidocs/:doc",
+      "destination": "/api-docs/viewer.html?doc=:doc"
+    },
+    {
       "source": "/meta-ads",
       "destination": "/api/meta-ads.js"
     },

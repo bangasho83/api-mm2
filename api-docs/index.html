@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Social APIs Documentation</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #111827;
+      --muted: #4b5563;
+      --line: #e5e7eb;
+      --brand: #0f766e;
+      --brand-soft: #ecfeff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Segoe UI", Tahoma, sans-serif;
+      background: radial-gradient(circle at 10% 10%, #dff7f4 0%, var(--bg) 45%), var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .shell {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .hero {
+      background: linear-gradient(120deg, #0f766e, #155e75);
+      color: white;
+      border-radius: 14px;
+      padding: 28px;
+      box-shadow: 0 18px 40px rgba(2, 6, 23, 0.15);
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      line-height: 1.15;
+    }
+    .hero p {
+      margin: 0;
+      opacity: 0.95;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+    .doc {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+    }
+    .doc:hover {
+      transform: translateY(-2px);
+      border-color: #99f6e4;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.08);
+    }
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: var(--brand);
+      background: var(--brand-soft);
+      padding: 4px 8px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    .title {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+    .hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .foot {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 1px 6px;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <h1>Social APIs Docs</h1>
+      <p>Internal reference for request/response formats, billing flows, and integration notes.</p>
+    </section>
+
+    <section class="grid" id="docs"></section>
+
+    <p class="foot">
+      Direct links follow this format: <code>/apidocs/BILLING_INGEST</code>
+    </p>
+  </main>
+
+  <script>
+    const docs = [
+      ["BILLING_INGEST", "Billing ingest endpoint and payloads"],
+      ["BILLING_AUDIT", "Audit records and billing verification"],
+      ["BRANDS_API", "Brand CRUD and archive APIs"],
+      ["IMAGE_TO_PROMPT", "Image to prompt API usage"],
+      ["METRONOME_CONFIG", "Metronome constants and settings"],
+      ["METRONOME_INTEGRATION", "Organization + metering flow"],
+      ["ORGANIZATION_ADD_BILLING", "Attach billing data to organizations"],
+      ["ORGANIZATION_INGEST_ALIAS_MATCHING", "Alias matching behavior during ingest"],
+      ["ORGANIZATION_SOFT_DELETE", "Soft delete behavior and safeguards"],
+      ["ORGANIZATION_STRIPE_INTEGRATION", "Organization-level Stripe integration"],
+      ["STRIPE_CHECKOUT", "Checkout sessions and front-end redirect flow"],
+      ["STRIPE_INTEGRATION", "End-to-end Stripe integration notes"]
+    ];
+
+    const container = document.getElementById('docs');
+    docs.forEach(([name, hint]) => {
+      const a = document.createElement('a');
+      a.className = 'doc';
+      a.href = `/apidocs/${encodeURIComponent(name)}`;
+      a.innerHTML = `
+        <span class="tag">API DOC</span>
+        <h2 class="title">${name.replaceAll('_', ' ')}</h2>
+        <p class="hint">${hint}</p>
+      `;
+      container.appendChild(a);
+    });
+  </script>
+</body>
+</html>
