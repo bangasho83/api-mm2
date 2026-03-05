@@ -31,10 +31,14 @@
   "rewrites": [
     {
       "source": "/apidocs",
-      "destination": "/api-docs/index.html"
+      "destination": "/api-docs/swagger.html"
     },
     {
       "source": "/apidocs/",
+      "destination": "/api-docs/swagger.html"
+    },
+    {
+      "source": "/apidocs/legacy",
       "destination": "/api-docs/index.html"
     },
     {
