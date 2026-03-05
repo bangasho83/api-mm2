@@ -3,642 +3,186 @@
   "info": {
     "title": "MetrixMate API",
     "description": "API documentation for MetrixMate social media analytics and marketing platform",
-    "version": "1.0.0",
-    "contact": {
-      "name": "API Support",
-      "url": "https://api-mm2.vercel.app"
-    }
+    "version": "1.0.0"
   },
   "servers": [
-    {
-      "url": "https://api-mm2.vercel.app",
-      "description": "Production server"
-    },
-    {
-      "url": "http://localhost:3000",
-      "description": "Local development server"
-    }
+    {"url": "https://api-mm2.vercel.app", "description": "Production server"}
   ],
   "tags": [
-    {
-      "name": "Image Generation",
-      "description": "AI-powered image generation endpoints"
-    },
-    {
-      "name": "Moodboard",
-      "description": "Moodboard collection management"
-    },
-    {
-      "name": "Meta Ads",
-      "description": "Meta (Facebook/Instagram) advertising analytics"
-    },
-    {
-      "name": "Analytics",
-      "description": "Google Analytics 4 data endpoints"
-    },
-    {
-      "name": "Billing",
-      "description": "Billing and subscription management"
-    },
-    {
-      "name": "Organizations",
-      "description": "Organization management"
-    },
-    {
-      "name": "Brands",
-      "description": "Brand management"
-    }
+    {"name": "Image Generation"},
+    {"name": "Moodboard"},
+    {"name": "Meta Ads"},
+    {"name": "Analytics"},
+    {"name": "Billing"},
+    {"name": "Organizations"},
+    {"name": "Brands"},
+    {"name": "Social"},
+    {"name": "SEO"},
+    {"name": "Keywords"},
+    {"name": "Content"},
+    {"name": "Sales"},
+    {"name": "Users"},
+    {"name": "Calendar"},
+    {"name": "Utilities"}
   ],
   "paths": {
     "/api/image-gen": {
-      "get": {
-        "tags": ["Image Generation"],
-        "summary": "List generated images",
-        "description": "Retrieve a list of generated images from the creativeGen collection with optional filters",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Organization ID"
-          },
-          {
-            "name": "brandId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by brand ID"
-          },
-          {
-            "name": "userId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by user ID"
-          },
-          {
-            "name": "model",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": ["Imagen4", "Nano Banana", "Nano Banana Pro", "Flux-kontext"]
-            },
-            "description": "Filter by AI model"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 25,
-              "minimum": 1,
-              "maximum": 100
-            },
-            "description": "Number of items per page"
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 1,
-              "minimum": 1
-            },
-            "description": "Page number"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "organizationId": {
-                      "type": "string"
-                    },
-                    "count": {
-                      "type": "integer"
-                    },
-                    "totalCount": {
-                      "type": "integer"
-                    },
-                    "page": {
-                      "type": "integer"
-                    },
-                    "pageSize": {
-                      "type": "integer"
-                    },
-                    "items": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "imageUrl": {
-                            "type": "string"
-                          },
-                          "prompt": {
-                            "type": "string"
-                          },
-                          "model": {
-                            "type": "string"
-                          },
-                          "createdAt": {
-                            "type": "string",
-                            "format": "date-time"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["Image Generation"],
-        "summary": "Generate images",
-        "description": "Generate AI images using various models (Imagen4, Nano Banana, Flux, etc.)",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["prompt", "organizationId"],
-                "properties": {
-                  "prompt": {
-                    "type": "string",
-                    "description": "Text prompt for image generation"
-                  },
-                  "organizationId": {
-                    "type": "string",
-                    "description": "Organization ID"
-                  },
-                  "brandId": {
-                    "type": "string",
-                    "description": "Brand ID"
-                  },
-                  "userId": {
-                    "type": "string",
-                    "description": "User ID"
-                  },
-                  "model": {
-                    "type": "string",
-                    "enum": ["imagen4", "banana-text", "banana-pro-text", "banana-image", "banana-pro-image", "flux-kontext"],
-                    "default": "imagen4",
-                    "description": "AI model to use"
-                  },
-                  "aspect_ratio": {
-                    "type": "string",
-                    "enum": ["1:1", "16:9", "9:16", "3:4", "4:3"],
-                    "default": "1:1",
-                    "description": "Image aspect ratio"
-                  },
-                  "num_images": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 4,
-                    "default": 1,
-                    "description": "Number of images to generate"
-                  },
-                  "negative_prompt": {
-                    "type": "string",
-                    "description": "Negative prompt (what to avoid)"
-                  },
-                  "brandGuideline": {
-                    "type": "string",
-                    "description": "Brand guidelines"
-                  },
-                  "creativeGuideline": {
-                    "type": "string",
-                    "description": "Creative guidelines"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Images generated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "images": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "url": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    },
-                    "seed": {
-                      "type": "integer"
-                    },
-                    "requestId": {
-                      "type": "string"
-                    },
-                    "credits": {
-                      "type": "integer"
-                    },
-                    "model": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request - missing required fields"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
+      "get": {"tags": ["Image Generation"], "summary": "List generated images", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "brandId", "in": "query", "schema": {"type": "string"}}, {"name": "userId", "in": "query", "schema": {"type": "string"}}, {"name": "limit", "in": "query", "schema": {"type": "integer"}}], "responses": {"200": {"description": "Success"}}},
+      "post": {"tags": ["Image Generation"], "summary": "Generate images", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["prompt", "organizationId"], "properties": {"prompt": {"type": "string"}, "organizationId": {"type": "string"}, "brandId": {"type": "string"}, "userId": {"type": "string"}, "model": {"type": "string", "enum": ["imagen4", "banana-text", "banana-pro-text", "banana-image", "banana-pro-image", "flux-kontext"]}, "aspect_ratio": {"type": "string", "enum": ["1:1", "16:9", "9:16", "3:4", "4:3"]}, "num_images": {"type": "integer"}, "negative_prompt": {"type": "string"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/gen-image-prompt": {
+      "post": {"tags": ["Content"], "summary": "Generate image prompt from text", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["prompt"], "properties": {"prompt": {"type": "string"}, "brandGuideline": {"type": "string"}, "creativeGuideline": {"type": "string"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/image-prompt": {
+      "post": {"tags": ["Content"], "summary": "Generate creative image prompt", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "properties": {"prompt": {"type": "string"}, "context": {"type": "string"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/image-to-prompt": {
+      "post": {"tags": ["Content"], "summary": "Generate prompt from image", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["imageUrl"], "properties": {"imageUrl": {"type": "string"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/edit-prompt": {
+      "post": {"tags": ["Content"], "summary": "Edit and refine prompt", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["prompt", "instruction"], "properties": {"prompt": {"type": "string"}, "instruction": {"type": "string"}}}}}}, "responses": {"200": {"description": "Success"}}}
     },
     "/api/moodboard": {
-      "get": {
-        "tags": ["Moodboard"],
-        "summary": "Get moodboard items",
-        "description": "Retrieve moodboard items with optional filters",
-        "parameters": [
-          {
-            "name": "itemId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Get specific item by ID"
-          },
-          {
-            "name": "organizationId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by organization ID"
-          },
-          {
-            "name": "brandId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by brand ID"
-          },
-          {
-            "name": "userId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by user ID"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 100
-            },
-            "description": "Maximum number of items to return"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "total": {
-                      "type": "integer"
-                    },
-                    "items": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["Moodboard"],
-        "summary": "Create moodboard item",
-        "description": "Save an image to the moodboard collection",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["imageUrl", "organizationId"],
-                "properties": {
-                  "imageUrl": {
-                    "type": "string",
-                    "description": "URL of the image to save"
-                  },
-                  "organizationId": {
-                    "type": "string",
-                    "description": "Organization ID"
-                  },
-                  "brandId": {
-                    "type": "string"
-                  },
-                  "userId": {
-                    "type": "string"
-                  },
-                  "model": {
-                    "type": "string"
-                  },
-                  "aspectRatio": {
-                    "type": "string"
-                  },
-                  "creativeGuideline": {
-                    "type": "string"
-                  },
-                  "note": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Moodboard item created successfully"
-          }
-        }
-      },
-      "put": {
-        "tags": ["Moodboard"],
-        "summary": "Update moodboard item",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["itemId"],
-                "properties": {
-                  "itemId": {
-                    "type": "string"
-                  },
-                  "note": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Item updated successfully"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Moodboard"],
-        "summary": "Delete moodboard item(s)",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "itemId": {
-                    "type": "string"
-                  },
-                  "itemIds": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "organizationId": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Item(s) deleted successfully"
-          }
-        }
-      }
+      "get": {"tags": ["Moodboard"], "summary": "Get moodboard items", "parameters": [{"name": "itemId", "in": "query", "schema": {"type": "string"}}, {"name": "organizationId", "in": "query", "schema": {"type": "string"}}, {"name": "brandId", "in": "query", "schema": {"type": "string"}}, {"name": "userId", "in": "query", "schema": {"type": "string"}}, {"name": "limit", "in": "query", "schema": {"type": "integer"}}], "responses": {"200": {"description": "Success"}}},
+      "post": {"tags": ["Moodboard"], "summary": "Create moodboard item", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["imageUrl", "organizationId"], "properties": {"imageUrl": {"type": "string"}, "organizationId": {"type": "string"}, "brandId": {"type": "string"}, "userId": {"type": "string"}, "model": {"type": "string"}, "aspectRatio": {"type": "string"}, "note": {"type": "string"}}}}}}, "responses": {"201": {"description": "Created"}}},
+      "put": {"tags": ["Moodboard"], "summary": "Update moodboard item", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["itemId"], "properties": {"itemId": {"type": "string"}, "note": {"type": "string"}}}}}}, "responses": {"200": {"description": "Success"}}},
+      "delete": {"tags": ["Moodboard"], "summary": "Delete moodboard item(s)", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "properties": {"itemId": {"type": "string"}, "itemIds": {"type": "array", "items": {"type": "string"}}, "organizationId": {"type": "string"}}}}}}, "responses": {"200": {"description": "Success"}}}
     },
     "/api/meta-campaign": {
-      "get": {
-        "tags": ["Meta Ads"],
-        "summary": "Get Meta campaign analytics",
-        "description": "Retrieve Meta (Facebook/Instagram) campaign performance data including ads, metrics, and creative assets",
-        "parameters": [
-          {
-            "name": "metaAccessToken",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Meta API access token"
-          },
-          {
-            "name": "metaAdAccountId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Meta Ad Account ID"
-          },
-          {
-            "name": "startDate",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            },
-            "description": "Start date (YYYY-MM-DD)"
-          },
-          {
-            "name": "endDate",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            },
-            "description": "End date (YYYY-MM-DD)"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Campaign data retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "campaigns": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "status": {
-                            "type": "string"
-                          },
-                          "adSets": {
-                            "type": "array",
-                            "items": {
-                              "type": "object"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+      "get": {"tags": ["Meta Ads"], "summary": "Get Meta campaign analytics", "parameters": [{"name": "metaAccessToken", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "metaAdAccountId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "startDate", "in": "query", "schema": {"type": "string"}}, {"name": "endDate", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/meta-ads": {
+      "get": {"tags": ["Meta Ads"], "summary": "Get Meta ads data", "parameters": [{"name": "metaAccessToken", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "metaAdAccountId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "startDate", "in": "query", "schema": {"type": "string"}}, {"name": "endDate", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/meta-stats": {
+      "get": {"tags": ["Meta Ads"], "summary": "Get Meta statistics", "parameters": [{"name": "metaAccessToken", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "metaAdAccountId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "startDate", "in": "query", "schema": {"type": "string"}}, {"name": "endDate", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/meta-ad-sim": {
+      "post": {"tags": ["Meta Ads"], "summary": "Simulate Meta ad performance", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "properties": {"adData": {"type": "object"}}}}}}, "responses": {"200": {"description": "Success"}}}
     },
     "/api/brands": {
-      "get": {
-        "tags": ["Brands"],
-        "summary": "Get brands",
-        "description": "Retrieve brands for an organization",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Brands retrieved successfully"
-          }
-        }
-      },
-      "post": {
-        "tags": ["Brands"],
-        "summary": "Create brand",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["name", "organizationId"],
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "organizationId": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Brand created successfully"
-          }
-        }
-      }
+      "get": {"tags": ["Brands"], "summary": "Get brands", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}},
+      "post": {"tags": ["Brands"], "summary": "Create brand", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["name", "organizationId"], "properties": {"name": {"type": "string"}, "organizationId": {"type": "string"}, "description": {"type": "string"}}}}}}, "responses": {"201": {"description": "Created"}}}
+    },
+    "/api/check-brand": {
+      "get": {"tags": ["Brands"], "summary": "Check brand exists", "parameters": [{"name": "brandId", "in": "query", "required": true, "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/debug-brand": {
+      "get": {"tags": ["Brands"], "summary": "Debug brand data", "parameters": [{"name": "brandId", "in": "query", "required": true, "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
     },
     "/api/organizations": {
-      "get": {
-        "tags": ["Organizations"],
-        "summary": "Get organization details",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Organization details retrieved"
-          }
-        }
-      }
+      "get": {"tags": ["Organizations"], "summary": "Get organization details", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
     },
     "/api/billing/balance": {
-      "get": {
-        "tags": ["Billing"],
-        "summary": "Get billing balance",
-        "description": "Retrieve current credit balance for an organization",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Balance retrieved successfully"
-          }
-        }
-      }
+      "get": {"tags": ["Billing"], "summary": "Get billing balance", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/billing/checkout": {
+      "post": {"tags": ["Billing"], "summary": "Create checkout session", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["organizationId"], "properties": {"organizationId": {"type": "string"}, "amount": {"type": "number"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/billing/verify-checkout": {
+      "post": {"tags": ["Billing"], "summary": "Verify checkout session", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["sessionId"], "properties": {"sessionId": {"type": "string"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/billing/topup": {
+      "post": {"tags": ["Billing"], "summary": "Top up credits", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["organizationId", "amount"], "properties": {"organizationId": {"type": "string"}, "amount": {"type": "number"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/billing/contracts": {
+      "get": {"tags": ["Billing"], "summary": "Get billing contracts", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/billing/add-contract": {
+      "post": {"tags": ["Billing"], "summary": "Add billing contract", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["organizationId"], "properties": {"organizationId": {"type": "string"}, "contractData": {"type": "object"}}}}}}, "responses": {"201": {"description": "Created"}}}
+    },
+    "/api/billing/rate-card": {
+      "get": {"tags": ["Billing"], "summary": "Get rate card", "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/billing/payment-info": {
+      "get": {"tags": ["Billing"], "summary": "Get payment information", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/billing/has-payment": {
+      "get": {"tags": ["Billing"], "summary": "Check if organization has payment method", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/billing/link-stripe": {
+      "post": {"tags": ["Billing"], "summary": "Link Stripe account", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["organizationId"], "properties": {"organizationId": {"type": "string"}, "stripeCustomerId": {"type": "string"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/billing/ingest": {
+      "post": {"tags": ["Billing"], "summary": "Ingest billing data", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "properties": {"data": {"type": "object"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/combined-analytics": {
+      "get": {"tags": ["Analytics"], "summary": "Get combined analytics data", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "brandId", "in": "query", "schema": {"type": "string"}}, {"name": "startDate", "in": "query", "schema": {"type": "string"}}, {"name": "endDate", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/ga4-events": {
+      "get": {"tags": ["Analytics"], "summary": "Get GA4 events", "parameters": [{"name": "propertyId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "startDate", "in": "query", "schema": {"type": "string"}}, {"name": "endDate", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/ga4-sales": {
+      "get": {"tags": ["Analytics"], "summary": "Get GA4 sales data", "parameters": [{"name": "propertyId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "startDate", "in": "query", "schema": {"type": "string"}}, {"name": "endDate", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/ga4-users": {
+      "get": {"tags": ["Analytics"], "summary": "Get GA4 users data", "parameters": [{"name": "propertyId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "startDate", "in": "query", "schema": {"type": "string"}}, {"name": "endDate", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/summary-stats": {
+      "get": {"tags": ["Analytics"], "summary": "Get summary statistics", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "brandId", "in": "query", "schema": {"type": "string"}}, {"name": "startDate", "in": "query", "schema": {"type": "string"}}, {"name": "endDate", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/sales": {
+      "get": {"tags": ["Sales"], "summary": "Get sales data", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "brandId", "in": "query", "schema": {"type": "string"}}, {"name": "startDate", "in": "query", "schema": {"type": "string"}}, {"name": "endDate", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/sales-trends": {
+      "get": {"tags": ["Sales"], "summary": "Get sales trends", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "brandId", "in": "query", "schema": {"type": "string"}}, {"name": "startDate", "in": "query", "schema": {"type": "string"}}, {"name": "endDate", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/users": {
+      "get": {"tags": ["Users"], "summary": "Get users", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/social": {
+      "get": {"tags": ["Social"], "summary": "Get social media data", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "brandId", "in": "query", "schema": {"type": "string"}}, {"name": "platform", "in": "query", "schema": {"type": "string", "enum": ["facebook", "instagram", "twitter", "linkedin"]}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/social-insights": {
+      "get": {"tags": ["Social"], "summary": "Get social insights", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "brandId", "in": "query", "schema": {"type": "string"}}, {"name": "startDate", "in": "query", "schema": {"type": "string"}}, {"name": "endDate", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/insights": {
+      "get": {"tags": ["Social"], "summary": "Get general insights", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "brandId", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/seo-insights": {
+      "get": {"tags": ["SEO"], "summary": "Get SEO insights", "parameters": [{"name": "domain", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "organizationId", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/site-audit": {
+      "get": {"tags": ["SEO"], "summary": "Get site audit", "parameters": [{"name": "domain", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "organizationId", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/backlinks": {
+      "get": {"tags": ["SEO"], "summary": "Get backlinks data", "parameters": [{"name": "domain", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "organizationId", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/keywords": {
+      "get": {"tags": ["Keywords"], "summary": "Get keywords", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "brandId", "in": "query", "schema": {"type": "string"}}, {"name": "query", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/keyword-research": {
+      "get": {"tags": ["Keywords"], "summary": "Get keyword research data", "parameters": [{"name": "keyword", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "location", "in": "query", "schema": {"type": "string"}}, {"name": "language", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/keyword-sim": {
+      "post": {"tags": ["Keywords"], "summary": "Simulate keyword performance", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "properties": {"keyword": {"type": "string"}, "data": {"type": "object"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/calendar": {
+      "get": {"tags": ["Calendar"], "summary": "Get calendar events", "parameters": [{"name": "organizationId", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "brandId", "in": "query", "schema": {"type": "string"}}, {"name": "startDate", "in": "query", "schema": {"type": "string"}}, {"name": "endDate", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/calendar-sim": {
+      "post": {"tags": ["Calendar"], "summary": "Simulate calendar events", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "properties": {"events": {"type": "array"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/places": {
+      "get": {"tags": ["Utilities"], "summary": "Get places data", "parameters": [{"name": "query", "in": "query", "required": true, "schema": {"type": "string"}}, {"name": "location", "in": "query", "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/places-simple": {
+      "get": {"tags": ["Utilities"], "summary": "Get simple places data", "parameters": [{"name": "query", "in": "query", "required": true, "schema": {"type": "string"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/html-scraper": {
+      "post": {"tags": ["Utilities"], "summary": "Scrape HTML content", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["url"], "properties": {"url": {"type": "string"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/clear-cache": {
+      "post": {"tags": ["Utilities"], "summary": "Clear cache", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "properties": {"cacheKey": {"type": "string"}}}}}}, "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/api-logs": {
+      "get": {"tags": ["Utilities"], "summary": "Get API logs", "parameters": [{"name": "organizationId", "in": "query", "schema": {"type": "string"}}, {"name": "limit", "in": "query", "schema": {"type": "integer"}}], "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/firebase-test": {
+      "get": {"tags": ["Utilities"], "summary": "Test Firebase connection", "responses": {"200": {"description": "Success"}}}
+    },
+    "/api/firebase-rules-info": {
+      "get": {"tags": ["Utilities"], "summary": "Get Firebase rules information", "responses": {"200": {"description": "Success"}}}
     }
   }
 }
-
