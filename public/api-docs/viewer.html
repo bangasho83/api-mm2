@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Documentation Viewer</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #111827;
+      --muted: #4b5563;
+      --line: #e5e7eb;
+      --brand: #0f766e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #edf2ff 0%, var(--bg) 30%);
+      font-family: "IBM Plex Sans", "Segoe UI", Tahoma, sans-serif;
+      color: var(--ink);
+      padding: 18px;
+    }
+    .wrap {
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--brand);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .title {
+      margin: 0;
+      font-size: 20px;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 4px 0 0;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      overflow: auto;
+    }
+    .error {
+      border-color: #fecaca;
+      background: #fff1f2;
+    }
+    .markdown h1, .markdown h2, .markdown h3 { line-height: 1.25; }
+    .markdown code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: #f3f4f6;
+      border-radius: 4px;
+      padding: 2px 6px;
+    }
+    .markdown pre {
+      background: #0b1020;
+      color: #e5e7eb;
+      padding: 14px;
+      border-radius: 10px;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .markdown pre code {
+      background: none;
+      padding: 0;
+      color: inherit;
+    }
+    .markdown table {
+      border-collapse: collapse;
+      width: 100%;
+      display: block;
+      overflow-x: auto;
+    }
+    .markdown th, .markdown td {
+      border: 1px solid #d1d5db;
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .markdown blockquote {
+      margin: 0;
+      border-left: 4px solid #99f6e4;
+      background: #ecfeff;
+      padding: 8px 12px;
+      color: #0f172a;
+    }
+    .loading {
+      color: var(--muted);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="top">
+      <a class="back" href="/apidocs">← Back to docs index</a>
+      <div>
+        <h1 class="title" id="docTitle">Loading...</h1>
+        <p class="meta" id="docPath"></p>
+      </div>
+    </div>
+
+    <article class="panel markdown" id="content">
+      <p class="loading">Fetching document...</p>
+    </article>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    const allowed = new Set([
+      'BILLING_INGEST',
+      'BILLING_AUDIT',
+      'BRANDS_API',
+      'IMAGE_TO_PROMPT',
+      'METRONOME_CONFIG',
+      'METRONOME_INTEGRATION',
+      'ORGANIZATION_ADD_BILLING',
+      'ORGANIZATION_INGEST_ALIAS_MATCHING',
+      'ORGANIZATION_SOFT_DELETE',
+      'ORGANIZATION_STRIPE_INTEGRATION',
+      'STRIPE_CHECKOUT',
+      'STRIPE_INTEGRATION'
+    ]);
+
+    const params = new URLSearchParams(window.location.search);
+    let doc = (params.get('doc') || '').trim();
+    if (!doc) {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      doc = parts.length > 1 ? decodeURIComponent(parts[1]) : '';
+    }
+    doc = doc.replace(/\.md$/i, '').toUpperCase();
+
+    const title = document.getElementById('docTitle');
+    const path = document.getElementById('docPath');
+    const content = document.getElementById('content');
+
+    if (!allowed.has(doc)) {
+      title.textContent = 'Document not found';
+      path.textContent = '/docs/<invalid>.md';
+      content.classList.add('error');
+      content.innerHTML = '<p>This doc name is not in the published API docs list.</p>';
+    } else {
+      const filePath = `/docs/${doc}.md`;
+      title.textContent = doc.replaceAll('_', ' ');
+      path.textContent = filePath;
+
+      fetch(filePath)
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`Unable to load ${filePath}`);
+          }
+          return res.text();
+        })
+        .then((markdown) => {
+          content.innerHTML = marked.parse(markdown);
+        })
+        .catch((err) => {
+          content.classList.add('error');
+          content.innerHTML = `<p>${err.message}</p>`;
+        });
+    }
+  </script>
+</body>
+</html>
