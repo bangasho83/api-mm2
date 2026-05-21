@@ -40,6 +40,8 @@
   .sta-summary{background:linear-gradient(135deg,#0f2a1a,#1e293b);border:1px solid #16a34a;border-radius:.75rem;padding:1.5rem;margin-top:2rem}
   .sta-summary h3{color:#86efac;font-size:1rem;font-weight:700;margin-bottom:.75rem}
   .sta-summary p{color:#cbd5e1;font-size:.9rem}
+  .hyp-diagram{margin-top:1.25rem;background:#0d0d1f;border:1px solid #2d1b6e;border-radius:.5rem;padding:1rem 1.25rem .75rem;overflow-x:auto}
+  .hyp-diagram h4{color:#475569;font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;margin-bottom:.6rem}
   footer{text-align:center;color:#475569;font-size:.8rem;padding:2rem;margin-top:3rem;border-top:1px solid #1e293b}
 </style>
 </head>
@@ -113,6 +115,20 @@ try {
     querySnapshot = await backlinksRef.where('brandId', '==', brandId).get();
   }
 }</code></pre>
+      <div class="hyp-diagram">
+        <h4>Code Logic Flow</h4>
+        <div class="mermaid">
+flowchart TD
+  A([Write metric doc]) --> B[Firestore document stored]
+  B --> C{Retroactive mutation?}
+  C -->|"Meta revises spend\nafter attribution window"| D["Full document rewrite\nno diff or patch primitive"]
+  C -->|No change| E([Stable doc])
+  F([Query with range filter]) --> G{"Composite index\npre-built?"}
+  G -->|"No — runtime error code 9"| H[Full collection scan fallback]
+  H --> I["Client-side date filter\nprojection layer emerges as fix"]
+  G -->|Yes| J([Indexed query succeeds])
+        </div>
+      </div>
       <div class="fail-note">⛌ FAILURE: Composite index requirement not detectable at schema design time. Retroactive mutation requires full document rewrite with no diff-absorption primitive.</div>
     </div>
   </div>
@@ -144,6 +160,18 @@ CREATE MATERIALIZED VIEW monthly_spend AS
 -- Meta retroactively revises spend figures after attribution window.
 -- UPDATE on historical rows triggers partition rebuild → REFRESH MATERIALIZED VIEW
 -- required on every retroactive mutation. Materialisation overhead exceeds benefit.</code></pre>
+      <div class="hyp-diagram">
+        <h4>Code Logic Flow</h4>
+        <div class="mermaid">
+flowchart TD
+  A([Meta revises historical spend]) --> B["UPDATE row in\npartitioned table"]
+  B --> C[Partition rebuild triggered]
+  C --> D["REFRESH MATERIALIZED VIEW\nblocks reads · expensive per mutation"]
+  D --> E{Mutation frequency?}
+  E -->|"High — many attribution\nwindows revised simultaneously"| F([Materialisation cost\nexceeds query benefit])
+  E -->|Low and infrequent| G([Acceptable overhead])
+        </div>
+      </div>
       <div class="neg-note">◈ NEGATIVE RESULT (design phase): Materialised aggregates are invalidated by retroactive mutation. UPSERT/UPDATE requires the ingestion layer to supply the delta — the storage layer cannot absorb the mutation natively.</div>
     </div>
   </div>
@@ -173,6 +201,17 @@ WHEN NOT MATCHED THEN
 -- to detect the change — it only absorbs what the ingestion layer delivers.
 -- The retroactive mutation problem is not a storage problem; it is an ingestion
 -- detection problem. No warehouse-class primitive solves it natively.</code></pre>
+      <div class="hyp-diagram">
+        <h4>Code Logic Flow</h4>
+        <div class="mermaid">
+flowchart TD
+  A([Meta retroactively revises metric]) --> B{"Warehouse detects\nthe change?"}
+  B -->|"No — warehouse is passive\nonly receives what ingestion sends"| C([Mutation undetected\nstale data served indefinitely])
+  D([Ingestion layer detects delta]) --> E["MERGE / UPSERT\nSnowflake · BigQuery · Redshift"]
+  E --> F([Row updated correctly])
+  B -->|"Only if ingestion\nsupplies the delta record"| D
+        </div>
+      </div>
       <div class="neg-note">◈ NEGATIVE RESULT (design phase): All three warehouse platforms share this limitation. This is a corollary negative result applicable across the warehouse class — retroactive mutation absorption cannot be delegated to a storage primitive.</div>
     </div>
   </div>
@@ -211,6 +250,18 @@ const ORG_CACHE   = { data: {}, timestamps: {}, TTL: 15 * 60 * 1000 };
 //     15-minute staleness — longer TTL reduces Firestore read load
 
 // Workload classification determines TTL; TTL is not shared across consumer classes.</code></pre>
+      <div class="hyp-diagram">
+        <h4>Code Logic Flow</h4>
+        <div class="mermaid">
+flowchart TD
+  A([Write to Firestore\nno rewrite on mutation]) --> B([Read request arrives])
+  B --> C[Classify consumer workload]
+  C -->|"Operational: brand resolution\non every API call"| D["BRAND_CACHE\nTTL = 1 min"]
+  C -->|"Analytical: org-level\nbilling aggregates"| E["ORG_CACHE\nTTL = 15 min"]
+  D & E --> F["Projection layer:\nclient-side date filter\nfromDate / toDate applied at read"]
+  F --> G([Retroactive mutation absorbed\nat read time · no storage rewrite])
+        </div>
+      </div>
       <div class="sta-note">✓ STA: Retroactive mutation absorbed at the projection layer, not at storage. Consumer-class stratification implemented as a workload classification model. Corollary negative result documented: no warehouse-class storage primitive absorbs retroactive metric mutation natively.</div>
     </div>
   </div>

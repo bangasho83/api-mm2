@@ -40,6 +40,8 @@
   .sta-summary{background:linear-gradient(135deg,#0f2a1a,#1e293b);border:1px solid #16a34a;border-radius:.75rem;padding:1.5rem;margin-top:2rem}
   .sta-summary h3{color:#86efac;font-size:1rem;font-weight:700;margin-bottom:.75rem}
   .sta-summary p{color:#cbd5e1;font-size:.9rem}
+  .hyp-diagram{margin-top:1.25rem;background:#0a160f;border:1px solid #1a3a2a;border-radius:.5rem;padding:1rem 1.25rem .75rem;overflow-x:auto}
+  .hyp-diagram h4{color:#475569;font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;margin-bottom:.6rem}
   footer{text-align:center;color:#475569;font-size:.8rem;padding:2rem;margin-top:3rem;border-top:1px solid #1e293b}
 </style>
 </head>
@@ -109,6 +111,19 @@ const response = await Promise.race([
 // FAILURE 1: no iteration — model cannot refine output across cycles.
 // FAILURE 2: 45 s timeout discards all partial progress with no checkpoint.
 // FAILURE 3: context not partitioned — model attends poorly to distal sections.</code></pre>
+      <div class="hyp-diagram">
+        <h4>Code Logic Flow</h4>
+        <div class="mermaid">
+flowchart TD
+  A([Campaign brief request]) --> B["Single gpt-4o-mini call\nfull context in one shot\nmax_tokens=1500"]
+  B --> C{Completes within 45s?}
+  C -->|Yes| D[parseBriefSections\nregex on full response]
+  D --> E{Distal sections\npopulated?}
+  E -->|"No — model ignores\ntail context beyond ~1500 tokens"| F([Shallow or generic brief])
+  E -->|Yes| G([Brief returned])
+  C -->|"45s timeout"| H([All partial progress discarded\nno checkpoint exists])
+        </div>
+      </div>
       <div class="fail-note">⛌ FAILURE: No iteration boundary. Partial failure (timeout) discards all progress. Distal context sections receive degraded model attention in monolithic prompts.</div>
     </div>
   </div>
@@ -158,6 +173,21 @@ function parseBriefSections(content) {
   return sections;
   // Context passed as raw string between pipeline stages = context drift risk.
 }</code></pre>
+      <div class="hyp-diagram">
+        <h4>Code Logic Flow</h4>
+        <div class="mermaid">
+flowchart TD
+  A([Request]) --> B["Step 1: gpt-4o-mini\ncampaign brief generation"]
+  B --> C["parseBriefSections\nregex parser on raw string"]
+  C --> D{Sections well-formed?}
+  D -->|"No — model deviated\nfrom expected format"| E["Malformed sections object\nsilently propagated downstream"]
+  D -->|Yes| F["Step 2: gpt-4o\nimage prompt derivation\ncontext passed as raw string"]
+  E --> F
+  F --> G{Step 2 within 30s?}
+  G -->|No| H([Full pipeline restart from Step 1\nno partial checkpoint])
+  G -->|Yes| I([Image prompt output])
+        </div>
+      </div>
       <div class="fail-note">⛌ FAILURE: Error in step 1 propagates to step 2 with no correction. Context propagated as raw string through brittle regex parser — model format deviation causes silent context corruption.</div>
     </div>
   </div>
@@ -189,6 +219,20 @@ briefWorker.on('message', (brief) => {
 //   (a) checkpoint partial LLM output across a boundary failure
 //   (b) propagate typed context (sections object) without serialisation loss
 //   (c) implement non-linear handoffs (feedback cycles) statelessly</code></pre>
+      <div class="hyp-diagram">
+        <h4>Code Logic Flow</h4>
+        <div class="mermaid">
+flowchart TD
+  A([Brief Worker starts]) --> B["Serialize LLM output\nas string message to Worker 2"]
+  B --> C([Prompt Worker])
+  C --> D["Serialize output\nto Worker 3"]
+  D --> E([Image Gen Worker])
+  E --> F{Any worker fails?}
+  F -->|"Yes — no checkpoint\npartial LLM state lost"| G([Full pipeline restart\nfrom Brief Worker 1])
+  F -->|No| H([Output delivered])
+  G --> A
+        </div>
+      </div>
       <div class="neg-note">◈ NEGATIVE RESULT (design phase): Stateless workers cannot checkpoint partial LLM output. Non-linear handoffs require shared mutable state that stateless workers structurally cannot provide. Each standard execution model fails at a different part of the iteration boundary.</div>
     </div>
   </div>
@@ -251,6 +295,21 @@ function parseBriefSections(content) {
   // Context-as-asset: sections object threads across iteration cycles without
   // raw-string serialisation loss.
 }</code></pre>
+      <div class="hyp-diagram">
+        <h4>Code Logic Flow</h4>
+        <div class="mermaid">
+flowchart TD
+  A{"existingGuide\npresent?"} -->|"Yes — re-execution path\nonly changed partition re-runs"| B["Build delta prompt:\nexistingGuide + feedback changes"]
+  A -->|"No — first run"| C[Build initial full prompt]
+  B & C --> D["gpt-4o-mini call\nPromise.race enforces 45s bound\nat orchestration layer"]
+  D --> E{Completed in time?}
+  E -->|Yes| F["parseBriefSections\nreturns typed sections object\n8 independently-addressable assets"]
+  E -->|Timeout| G([Bounded termination\nenforced by pipeline not model])
+  F --> H{Further iteration needed?}
+  H -->|"Yes — user sends feedback"| A
+  H -->|No| I([Final typed asset output])
+        </div>
+      </div>
       <div class="sta-note">✓ STA: Cycle-as-partition / context-as-asset pattern achieves reliable non-linear iteration. Failed partitions are re-executed in isolation. Bounded termination enforced at orchestration layer. Context propagated as typed assets, not raw strings.</div>
     </div>
   </div>

@@ -40,6 +40,8 @@
   .sta-summary{background:linear-gradient(135deg,#0f2a1a,#1e293b);border:1px solid #16a34a;border-radius:.75rem;padding:1.5rem;margin-top:2rem}
   .sta-summary h3{color:#86efac;font-size:1rem;font-weight:700;margin-bottom:.75rem}
   .sta-summary p{color:#cbd5e1;font-size:.9rem}
+  .hyp-diagram{margin-top:1.25rem;background:#0d1525;border:1px solid #1e3a5f;border-radius:.5rem;padding:1rem 1.25rem .75rem;overflow-x:auto}
+  .hyp-diagram h4{color:#475569;font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;margin-bottom:.6rem}
   footer{text-align:center;color:#475569;font-size:.8rem;padding:2rem;margin-top:3rem;border-top:1px solid #1e293b}
 </style>
 </head>
@@ -111,6 +113,19 @@ const runGA4ReportViaREST = async (propertyId, requestBody, accessToken) => {
   const url = `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`;
   // No refreshToken parameter; 401 on token expiry terminates ingestion silently.
 };</code></pre>
+      <div class="hyp-diagram">
+        <h4>Code Logic Flow</h4>
+        <div class="mermaid">
+flowchart TD
+  A([API Request]) --> B["Single axios GET\nfull date range · no chunking"]
+  B --> C{HTTP Status?}
+  C -->|200 OK| D([Return dataset])
+  C -->|"429 Rate Limit\nrange > 14 days"| E[No retry defined]
+  C -->|401 Token Expired| F[No refresh path]
+  E --> G([Empty or partial result])
+  F --> G
+        </div>
+      </div>
       <div class="fail-note">⛌ FAILURE: Meta API returns partial data or 429 for date ranges &gt; 14 days. GA4 returns 401 on token expiry with no recovery path.</div>
     </div>
   </div>
@@ -130,6 +145,19 @@ const ORG_CACHE   = { data: {}, timestamps: {}, TTL: 15 * 60 * 1000 };  // 15 mi
 // Both caches apply the same TTL policy to all sources.
 // Meta insights mutate retroactively (attribution window revision);
 // uniform TTL served stale spend/conversion figures without invalidation.</code></pre>
+      <div class="hyp-diagram">
+        <h4>Code Logic Flow</h4>
+        <div class="mermaid">
+flowchart TD
+  A([Request]) --> B{"Cache hit\nwithin TTL?"}
+  B -->|Yes| C[Return cached value]
+  B -->|No| D[Fetch from API]
+  D --> E["BRAND_CACHE TTL=1min\nORG_CACHE TTL=15min\napplied uniformly to all sources"]
+  C --> F{Data still valid?}
+  F -->|"GA4 — eventual consistency"| G([Accurate data])
+  F -->|"Meta — retroactively revised\nby attribution engine"| H([Stale spend or conversions served])
+        </div>
+      </div>
       <div class="fail-note">⛌ FAILURE: Uniform TTL cannot express per-source mutation semantics. Stale retroactively-revised Meta metrics served to consumers.</div>
     </div>
   </div>
@@ -167,6 +195,23 @@ if (daysDifference > 14) {
 }
 // GA4 uses runReport REST body (not URL params) + per-property daily quota —
 // a single windowing primitive cannot be shared across both sources.</code></pre>
+      <div class="hyp-diagram">
+        <h4>Code Logic Flow</h4>
+        <div class="mermaid">
+flowchart TD
+  A{"daysDifference\n> 14?"} -->|Yes| B[Split into 14-day windows]
+  A -->|No| C[Single request path]
+  B --> D["Window i: since → until\ncache_buster · no-cache headers"]
+  D --> E[axios GET insights chunk]
+  E --> F[Append chunk to insightsData]
+  F --> G{More windows?}
+  G -->|Yes| D
+  G -->|No| H([Meta ingestion complete])
+  C --> I{Source is GA4?}
+  I -->|"Different primitive: runReport body\nDifferent quota: per-property daily"| J([Cannot reuse same window logic])
+  I -->|Meta only| H
+        </div>
+      </div>
       <div class="partial-note">⚠ PARTIAL: Resolved Meta volume. GA4 retrieval primitive is incompatible — different quota model, different API contract. A generalised windowing primitive cannot span both.</div>
     </div>
   </div>
@@ -210,6 +255,21 @@ const refreshMetaAccessToken = async (shortLivedToken) => {
   // Token lifecycle and chunking strategy derived from classification axes,
   // not from ad-hoc per-API engineering.
 };</code></pre>
+      <div class="hyp-diagram">
+        <h4>Code Logic Flow</h4>
+        <div class="mermaid">
+flowchart TD
+  A([New source added]) --> B[Axis 1: Consistency model]
+  B -->|Retroactive mutation| C[Meta Graph insights]
+  B -->|Eventual consistency| D[GA4 runReport]
+  C --> E[Axis 2: Quota model]
+  E -->|Per-account hourly| F["Strategy: 14-day windowed chunks\ncache-bust headers\nlong-lived token exchange\nrefreshMetaAccessToken"]
+  D --> G[Axis 2: Quota model]
+  G -->|Per-property daily| H["Strategy: refresh-on-401\nno windowing required\nrefreshAccessToken on 401"]
+  F --> I([Meta retrieval executes correctly])
+  H --> J([GA4 retrieval executes correctly])
+        </div>
+      </div>
       <div class="sta-note">✓ STA: Per-source retrieval strategy now derived from classification, not hand-crafted. Adding a new source requires classifying it on three axes — no new engineering per source.</div>
     </div>
   </div>
