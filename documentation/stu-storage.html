@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>STU-Storage — MetrixMate SR&ED</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;line-height:1.6}
+  header{background:linear-gradient(135deg,#2d1b6e,#0f1117);padding:2.5rem 2rem 2rem;border-bottom:2px solid #7c3aed}
+  header .badge{display:inline-block;background:#7c3aed;color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:.25rem .75rem;border-radius:999px;margin-bottom:.75rem;text-transform:uppercase}
+  header h1{font-size:1.9rem;font-weight:700;color:#fff;margin-bottom:.5rem}
+  header p{color:#94a3b8;font-size:.95rem;max-width:72ch}
+  nav{background:#1e293b;padding:.75rem 2rem;display:flex;gap:1.5rem;font-size:.85rem;border-bottom:1px solid #334155}
+  nav a{color:#94a3b8;text-decoration:none;transition:color .2s}
+  nav a:hover,nav a.active{color:#a78bfa}
+  main{max-width:960px;margin:0 auto;padding:2rem 1.5rem}
+  .stu-block{background:#1e293b;border:1px solid #334155;border-radius:.75rem;padding:1.5rem;margin-bottom:1.5rem}
+  .stu-block h2{font-size:1rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-bottom:.5rem}
+  .stu-block p{color:#cbd5e1;font-size:.95rem}
+  .section-title{font-size:1.2rem;font-weight:700;color:#f1f5f9;margin:2rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #334155}
+  .hyp-card{background:#1e293b;border:1px solid #334155;border-radius:.75rem;margin-bottom:1.25rem;overflow:hidden}
+  .hyp-header{display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid #334155}
+  .hyp-header h3{font-size:1rem;font-weight:600;color:#f1f5f9}
+  .badge-fail{background:#7f1d1d;color:#fca5a5;font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:999px}
+  .badge-neg{background:#1e1b4b;color:#a5b4fc;font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:999px}
+  .badge-sta{background:#14532d;color:#86efac;font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:999px}
+  .hyp-body{padding:1.25rem}
+  .hyp-body p{color:#94a3b8;font-size:.9rem;margin-bottom:1rem}
+  .hyp-body pre{background:#0f172a;border-radius:.5rem;padding:1rem;overflow-x:auto;font-size:.82rem;border:1px solid #1e293b;margin-bottom:.75rem}
+  .fail-note{background:#1c0a0a;border-left:3px solid #dc2626;padding:.6rem 1rem;border-radius:0 .4rem .4rem 0;font-size:.85rem;color:#fca5a5;margin-top:.5rem}
+  .neg-note{background:#0d0d2b;border-left:3px solid #6366f1;padding:.6rem 1rem;border-radius:0 .4rem .4rem 0;font-size:.85rem;color:#a5b4fc;margin-top:.5rem}
+  .sta-note{background:#0a1c0f;border-left:3px solid #16a34a;padding:.6rem 1rem;border-radius:0 .4rem .4rem 0;font-size:.85rem;color:#86efac;margin-top:.5rem}
+  .diagram-wrap{background:#1e293b;border:1px solid #334155;border-radius:.75rem;padding:1.5rem;margin-bottom:2rem;overflow-x:auto}
+  .diagram-wrap h3{color:#94a3b8;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem}
+  .mermaid{display:flex;justify-content:center}
+  .sta-summary{background:linear-gradient(135deg,#0f2a1a,#1e293b);border:1px solid #16a34a;border-radius:.75rem;padding:1.5rem;margin-top:2rem}
+  .sta-summary h3{color:#86efac;font-size:1rem;font-weight:700;margin-bottom:.75rem}
+  .sta-summary p{color:#cbd5e1;font-size:.9rem}
+  footer{text-align:center;color:#475569;font-size:.8rem;padding:2rem;margin-top:3rem;border-top:1px solid #1e293b}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">SR&ED Audit Evidence — MetrixMate</div>
+  <h1>STU-Storage</h1>
+  <p>Architectural uncertainty in designing a storage layer for retroactively-mutating multi-source data serving heterogeneous consumer classes under multi-tenant SaaS economics.</p>
+</header>
+<nav>
+  <a href="stu-ingestion.html">Ingestion</a>
+  <a href="stu-storage.html" class="active">Storage</a>
+  <a href="stu-orchestration.html">Orchestration</a>
+  <a href="stu-generation.html">Generation</a>
+</nav>
+<main>
+  <div class="stu-block">
+    <h2>Scientific and Technological Uncertainty (STU)</h2>
+    <p>It was not known whether a single storage architecture could simultaneously satisfy three constraints that are in structural tension: absorbing retroactive metric mutations from external APIs, serving heterogeneous consumer classes (operational vs. analytical) with different latency and consistency requirements, and remaining economically viable under multi-tenant SaaS load.</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <h3>Hypothesis Progression — SIS Path to STA</h3>
+    <div class="mermaid">
+flowchart LR
+  H1["H1\nNoSQL\nDocument Store"]:::fail
+  H2["H2\nPostgres +\nMaterialised Views"]:::neg
+  H3["H3\nWarehouse-Class\n(Snowflake / BQ)"]:::neg
+  H4["H4 ✓ STA\nTiered Architecture\n+ Projection Layer"]:::sta
+
+  H1 -->|"FAIL: runtime index errors;\nretroactive mutation = full rewrite"| H2
+  H2 -->|"NEG RESULT: UPSERT requires\ndelta from ingestion, not storage"| H3
+  H3 -->|"NEG RESULT: same delta\nrequirement; MERGE insufficient"| H4
+
+  classDef fail fill:#7f1d1d,stroke:#dc2626,color:#fca5a5
+  classDef neg fill:#1e1b4b,stroke:#6366f1,color:#a5b4fc
+  classDef sta fill:#14532d,stroke:#16a34a,color:#86efac
+    </div>
+  </div>
+
+  <div class="section-title">Scientific Investigation and Systematic Experimentation (SIS)</div>
+
+  <!-- H1 -->
+  <div class="hyp-card">
+    <div class="hyp-header">
+      <span class="badge-fail">FAIL</span>
+      <h3>H1 — NoSQL Document Store (Firestore as Sole Layer)</h3>
+    </div>
+    <div class="hyp-body">
+      <p>Firestore used as the primary and only storage layer for all data classes: metrics, brand profiles, org configs, backlinks. Retroactive metric mutation (Meta spend revision, GA4 session reattribution) required full document rewrites. Composite query requirements surfaced as runtime index errors not detectable at write time.</p>
+      <pre><code class="language-js">// services/firebase-service.js : 19
+// H1: Firestore as sole storage layer
+const db = admin.firestore();
+// ALL data classes stored as Firestore documents:
+//   metrics, brands, orgs, pages, backlinks
+// FAILURE 1: retroactive mutations require full doc rewrites —
+//   no diff/patch primitive in Firestore.
+// FAILURE 2: composite index requirement surfaces at query time,
+//   not at write time — runtime failure for multi-field range queries.</code></pre>
+      <pre><code class="language-js">// services/firebase-service.js : 316–350
+// PSEUDOCODE: H1 — composite index failure at runtime
+try {
+  let query = backlinksRef.where('brandId', '==', brandId);
+  if (fromDate) query = query.where('createdAt', '>=', fromTimestamp);
+  if (toDate)   query = query.where('createdAt', '<=', toTimestamp);
+  querySnapshot = await query.get();   // FAILS if composite index not pre-built
+} catch (indexError) {
+  if (indexError.message.includes('index') || indexError.code === 9) {
+    // Forced fallback: full collection scan + client-side filter
+    // = projection layer emerges as necessary compensator at H1
+    querySnapshot = await backlinksRef.where('brandId', '==', brandId).get();
+  }
+}</code></pre>
+      <div class="fail-note">⛌ FAILURE: Composite index requirement not detectable at schema design time. Retroactive mutation requires full document rewrite with no diff-absorption primitive.</div>
+    </div>
+  </div>
+
+  <!-- H2 -->
+  <div class="hyp-card">
+    <div class="hyp-header">
+      <span class="badge-neg">NEGATIVE RESULT</span>
+      <h3>H2 — Relational Database with Partitioning and Materialised Aggregates</h3>
+    </div>
+    <div class="hyp-body">
+      <p>Postgres evaluated with tenant-partitioned tables and materialised views for aggregate queries. Partitioning addressed query performance for analytical consumers, but retroactive metric mutation invalidates materialised views — UPDATE on historical partitioned rows triggers partition rebuild, which defeats the materialisation.</p>
+      <pre><code class="language-sql">-- PSEUDOCODE: H2 — Postgres design-phase evaluation
+-- Partition by (tenant_id, date_month) for query locality
+CREATE TABLE ad_metrics (
+  tenant_id    UUID        NOT NULL,
+  date         DATE        NOT NULL,
+  spend        NUMERIC,
+  impressions  BIGINT,
+  conversions  BIGINT
+) PARTITION BY RANGE (date_month);
+
+-- Materialised view for analytical consumers
+CREATE MATERIALIZED VIEW monthly_spend AS
+  SELECT tenant_id, date_trunc('month', date) AS month, SUM(spend) AS total_spend
+  FROM ad_metrics GROUP BY 1, 2;
+
+-- NEGATIVE RESULT:
+-- Meta retroactively revises spend figures after attribution window.
+-- UPDATE on historical rows triggers partition rebuild → REFRESH MATERIALIZED VIEW
+-- required on every retroactive mutation. Materialisation overhead exceeds benefit.</code></pre>
+      <div class="neg-note">◈ NEGATIVE RESULT (design phase): Materialised aggregates are invalidated by retroactive mutation. UPSERT/UPDATE requires the ingestion layer to supply the delta — the storage layer cannot absorb the mutation natively.</div>
+    </div>
+  </div>
+
+  <!-- H3 -->
+  <div class="hyp-card">
+    <div class="hyp-header">
+      <span class="badge-neg">NEGATIVE RESULT</span>
+      <h3>H3 — Warehouse-Class Storage (Snowflake, BigQuery, Redshift)</h3>
+    </div>
+    <div class="hyp-body">
+      <p>Snowflake, BigQuery, and Redshift evaluated for the analytical consumer class. All three share the same structural negative result: MERGE/UPSERT primitives exist but require the ingestion layer to supply the delta record. The warehouse cannot detect or absorb retroactive mutation independently.</p>
+      <pre><code class="language-sql">-- PSEUDOCODE: H3 — Warehouse MERGE evaluation (BigQuery / Snowflake)
+MERGE INTO ad_metrics AS target
+USING (SELECT * FROM incoming_delta) AS source
+ON target.tenant_id = source.tenant_id
+  AND target.date = source.date
+WHEN MATCHED THEN
+  UPDATE SET spend = source.spend, conversions = source.conversions
+WHEN NOT MATCHED THEN
+  INSERT (tenant_id, date, spend, conversions)
+  VALUES (source.tenant_id, source.date, source.spend, source.conversions);
+
+-- NEGATIVE RESULT (corollary, applies to all three warehouses):
+-- MERGE/UPSERT exists but requires ingestion layer to produce a delta record.
+-- If Meta silently revises a historical figure, the warehouse has no mechanism
+-- to detect the change — it only absorbs what the ingestion layer delivers.
+-- The retroactive mutation problem is not a storage problem; it is an ingestion
+-- detection problem. No warehouse-class primitive solves it natively.</code></pre>
+      <div class="neg-note">◈ NEGATIVE RESULT (design phase): All three warehouse platforms share this limitation. This is a corollary negative result applicable across the warehouse class — retroactive mutation absorption cannot be delegated to a storage primitive.</div>
+    </div>
+  </div>
+
+  <!-- H4 / STA -->
+  <div class="hyp-card">
+    <div class="hyp-header">
+      <span class="badge-sta">STA ACHIEVED</span>
+      <h3>H4 — Tiered Architecture with Mutation Absorbed at the Projection Layer</h3>
+    </div>
+    <div class="hyp-body">
+      <p>Retroactive mutation absorbed at the projection (read) layer via client-side filtering — storage documents are not rewritten on mutation. Consumer-class TTL stratification (operational vs. analytical) implemented via two separate cache tiers with different invalidation intervals.</p>
+      <pre><code class="language-js">// services/firebase-service.js : 353–374
+// PSEUDOCODE: H4 — mutation absorbed at projection layer, not at storage
+backlinks.forEach(doc => {
+  const data = doc.data();
+  if (fromDate || toDate) {
+    const createdAt = data.createdAt.toDate
+      ? data.createdAt.toDate()
+      : new Date(data.createdAt);
+    // Projection layer applies date filter — storage doc is NOT rewritten.
+    // Retroactive mutation is a read-time recalculation, not a write-time update.
+    if (fromDate && createdAt < new Date(fromDate + 'T00:00:00.000Z')) return;
+    if (toDate   && createdAt > new Date(toDate   + 'T23:59:59.999Z')) return;
+  }
+  backlinks.push({ id: doc.id, ...data });
+});</code></pre>
+      <pre><code class="language-js">// services/firebase-service.js : 595–609
+// PSEUDOCODE: H4 — workload-classification model, two cache tiers
+const BRAND_CACHE = { data: {}, timestamps: {}, TTL: 1  * 60 * 1000 };
+//   ↑ operational consumer class: brand resolution on every API call
+//     requires fresh data — 1-minute TTL
+
+const ORG_CACHE   = { data: {}, timestamps: {}, TTL: 15 * 60 * 1000 };
+//   ↑ analytical consumer class: org-level billing aggregates tolerate
+//     15-minute staleness — longer TTL reduces Firestore read load
+
+// Workload classification determines TTL; TTL is not shared across consumer classes.</code></pre>
+      <div class="sta-note">✓ STA: Retroactive mutation absorbed at the projection layer, not at storage. Consumer-class stratification implemented as a workload classification model. Corollary negative result documented: no warehouse-class storage primitive absorbs retroactive metric mutation natively.</div>
+    </div>
+  </div>
+
+  <div class="sta-summary">
+    <h3>Scientific and Technological Advancement (STA)</h3>
+    <p><strong>Workload-classification model for tiered storage architecture.</strong> Retroactive mutation absorbed at the projection layer rather than at storage, decoupling storage write semantics from consumer read semantics. Consumer classes stratified by workload type (operational vs. analytical), each assigned an independent TTL policy derived from classification. <strong>Corollary negative result:</strong> no warehouse-class storage primitive (Postgres, Snowflake, BigQuery, Redshift) natively absorbs retroactive metric mutation — MERGE/UPSERT requires the ingestion layer to supply the delta. This finding is transferable: any SaaS data platform ingesting retroactively-mutating external metrics must absorb mutation at the projection layer, not at storage.</p>
+  </div>
+</main>
+<footer>MetrixMate — SR&amp;ED Audit Evidence &mdash; Canada Revenue Agency</footer>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark'});</script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>

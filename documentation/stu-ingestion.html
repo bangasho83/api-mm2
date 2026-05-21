@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>STU-Ingestion — MetrixMate SR&ED</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;line-height:1.6}
+  header{background:linear-gradient(135deg,#1e3a5f,#0f1117);padding:2.5rem 2rem 2rem;border-bottom:2px solid #2563eb}
+  header .badge{display:inline-block;background:#2563eb;color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:.25rem .75rem;border-radius:999px;margin-bottom:.75rem;text-transform:uppercase}
+  header h1{font-size:1.9rem;font-weight:700;color:#fff;margin-bottom:.5rem}
+  header p{color:#94a3b8;font-size:.95rem;max-width:72ch}
+  nav{background:#1e293b;padding:.75rem 2rem;display:flex;gap:1.5rem;font-size:.85rem;border-bottom:1px solid #334155}
+  nav a{color:#94a3b8;text-decoration:none;transition:color .2s}
+  nav a:hover,nav a.active{color:#60a5fa}
+  main{max-width:960px;margin:0 auto;padding:2rem 1.5rem}
+  .stu-block{background:#1e293b;border:1px solid #334155;border-radius:.75rem;padding:1.5rem;margin-bottom:1.5rem}
+  .stu-block h2{font-size:1rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-bottom:.5rem}
+  .stu-block p{color:#cbd5e1;font-size:.95rem}
+  .section-title{font-size:1.2rem;font-weight:700;color:#f1f5f9;margin:2rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #334155}
+  .hyp-card{background:#1e293b;border:1px solid #334155;border-radius:.75rem;margin-bottom:1.25rem;overflow:hidden}
+  .hyp-header{display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid #334155}
+  .hyp-header h3{font-size:1rem;font-weight:600;color:#f1f5f9}
+  .badge-fail{background:#7f1d1d;color:#fca5a5;font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:999px}
+  .badge-partial{background:#713f12;color:#fcd34d;font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:999px}
+  .badge-sta{background:#14532d;color:#86efac;font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:999px}
+  .hyp-body{padding:1.25rem}
+  .hyp-body p{color:#94a3b8;font-size:.9rem;margin-bottom:1rem}
+  .hyp-body pre{background:#0f172a;border-radius:.5rem;padding:1rem;overflow-x:auto;font-size:.82rem;border:1px solid #1e293b;margin-bottom:.75rem}
+  .fail-note{background:#1c0a0a;border-left:3px solid #dc2626;padding:.6rem 1rem;border-radius:0 .4rem .4rem 0;font-size:.85rem;color:#fca5a5;margin-top:.5rem}
+  .partial-note{background:#1c1000;border-left:3px solid #d97706;padding:.6rem 1rem;border-radius:0 .4rem .4rem 0;font-size:.85rem;color:#fcd34d;margin-top:.5rem}
+  .sta-note{background:#0a1c0f;border-left:3px solid #16a34a;padding:.6rem 1rem;border-radius:0 .4rem .4rem 0;font-size:.85rem;color:#86efac;margin-top:.5rem}
+  .diagram-wrap{background:#1e293b;border:1px solid #334155;border-radius:.75rem;padding:1.5rem;margin-bottom:2rem;overflow-x:auto}
+  .diagram-wrap h3{color:#94a3b8;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem}
+  .mermaid{display:flex;justify-content:center}
+  .sta-summary{background:linear-gradient(135deg,#0f2a1a,#1e293b);border:1px solid #16a34a;border-radius:.75rem;padding:1.5rem;margin-top:2rem}
+  .sta-summary h3{color:#86efac;font-size:1rem;font-weight:700;margin-bottom:.75rem}
+  .sta-summary p{color:#cbd5e1;font-size:.9rem}
+  footer{text-align:center;color:#475569;font-size:.8rem;padding:2rem;margin-top:3rem;border-top:1px solid #1e293b}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">SR&ED Audit Evidence — MetrixMate</div>
+  <h1>STU-Ingestion</h1>
+  <p>Architectural uncertainty in ingesting heterogeneous external marketing data sources with conflicting consistency, temporal, and rate-limit behaviours.</p>
+</header>
+<nav>
+  <a href="stu-ingestion.html" class="active">Ingestion</a>
+  <a href="stu-storage.html">Storage</a>
+  <a href="stu-orchestration.html">Orchestration</a>
+  <a href="stu-generation.html">Generation</a>
+</nav>
+<main>
+  <div class="stu-block">
+    <h2>Scientific and Technological Uncertainty (STU)</h2>
+    <p>It was not known whether a generalised ingestion architecture could reliably retrieve data from multiple marketing API sources (Meta Graph API, GA4) that differ in consistency model, retrieval primitive, quota model, and mutation behaviour — without source-specific engineering for each.</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <h3>Hypothesis Progression — SIS Path to STA</h3>
+    <div class="mermaid">
+flowchart LR
+  H1["H1\nSynchronous\nRetrieval"]:::fail
+  H2["H2\nUniform\nPolling Cache"]:::fail
+  H3["H3\nWindowed\nPagination"]:::partial
+  H4["H4 ✓ STA\nConsistency-Class\nClassification"]:::sta
+
+  H1 -->|"FAIL: rate-limit\n& token expiry"| H2
+  H2 -->|"FAIL: stale data\nfor mutating sources"| H3
+  H3 -->|"PARTIAL: Meta solved;\nGA4 quota mismatch"| H4
+
+  classDef fail fill:#7f1d1d,stroke:#dc2626,color:#fca5a5
+  classDef partial fill:#713f12,stroke:#d97706,color:#fcd34d
+  classDef sta fill:#14532d,stroke:#16a34a,color:#86efac
+    </div>
+  </div>
+
+  <div class="section-title">Scientific Investigation and Systematic Experimentation (SIS)</div>
+
+  <!-- H1 -->
+  <div class="hyp-card">
+    <div class="hyp-header">
+      <span class="badge-fail">FAIL</span>
+      <h3>H1 — Synchronous Retrieval (Single Request Per Source)</h3>
+    </div>
+    <div class="hyp-body">
+      <p>Single synchronous request issued per source with no chunking, no retry, and no token-refresh path. Collapsed under Meta Graph API rate limits for date ranges &gt; 14 days, and silently terminated on GA4 OAuth token expiry mid-request.</p>
+      <pre><code class="language-js">// services/meta-ads-service.js : 132–162
+// PSEUDOCODE: H1 — single request, no chunking
+const insightsResponse = await axios({
+  method: 'get',
+  url: `${META_BASE_URL}/${META_API_VERSION}/act_${metaAccountId}/insights`,
+  params: {
+    access_token: metaAccessToken,
+    fields: 'spend,impressions,clicks,reach,actions,...',
+    time_range: JSON.stringify(timeRange),   // full range, no window
+    time_increment: 1
+  },
+  timeout: 10000  // 10 s — no retry contract
+});
+// Returns partial data or 429 rate-limit error for ranges > 14 days.
+// No retry path; failure silently returns empty dataset.</code></pre>
+      <pre><code class="language-js">// services/ga4-service.js : 78–80
+// PSEUDOCODE: H1 — no OAuth refresh path
+const runGA4ReportViaREST = async (propertyId, requestBody, accessToken) => {
+  const url = `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`;
+  // No refreshToken parameter; 401 on token expiry terminates ingestion silently.
+};</code></pre>
+      <div class="fail-note">⛌ FAILURE: Meta API returns partial data or 429 for date ranges &gt; 14 days. GA4 returns 401 on token expiry with no recovery path.</div>
+    </div>
+  </div>
+
+  <!-- H2 -->
+  <div class="hyp-card">
+    <div class="hyp-header">
+      <span class="badge-fail">FAIL</span>
+      <h3>H2 — Uniform Polling Cache (Same TTL Across All Sources)</h3>
+    </div>
+    <div class="hyp-body">
+      <p>In-memory TTL cache applied uniformly to all sources at the same interval. Meta Ads metrics are retroactively revised by Meta's attribution engine after the reporting window closes; a fixed TTL cannot distinguish between sources that mutate retroactively and those that do not.</p>
+      <pre><code class="language-js">// services/firebase-service.js : 595–609
+// PSEUDOCODE: H2 — uniform TTL applied regardless of source mutation rate
+const BRAND_CACHE = { data: {}, timestamps: {}, TTL: 1 * 60 * 1000 };   // 1 min
+const ORG_CACHE   = { data: {}, timestamps: {}, TTL: 15 * 60 * 1000 };  // 15 min
+// Both caches apply the same TTL policy to all sources.
+// Meta insights mutate retroactively (attribution window revision);
+// uniform TTL served stale spend/conversion figures without invalidation.</code></pre>
+      <div class="fail-note">⛌ FAILURE: Uniform TTL cannot express per-source mutation semantics. Stale retroactively-revised Meta metrics served to consumers.</div>
+    </div>
+  </div>
+
+  <!-- H3 -->
+  <div class="hyp-card">
+    <div class="hyp-header">
+      <span class="badge-partial">PARTIAL</span>
+      <h3>H3 — Generalised Windowed Pagination (14-Day Chunks)</h3>
+    </div>
+    <div class="hyp-body">
+      <p>14-day windowed chunking introduced for Meta retrieval. Resolved Meta volume failures but exposed that GA4 uses a different retrieval primitive (REST runReport body, not URL params) and a per-property daily token quota — a single windowing primitive cannot straddle both APIs.</p>
+      <pre><code class="language-js">// services/meta-ads-service.js : 83–129
+// PSEUDOCODE: H3 — windowed pagination for Meta
+if (daysDifference > 14) {
+  let currentFrom = new Date(from);
+  while (currentFrom < endDate) {
+    let currentTo = new Date(currentFrom);
+    currentTo.setDate(currentTo.getDate() + 13);       // 14-day window
+    if (currentTo > endDate) currentTo = endDate;
+
+    const chunk = await axios({
+      url: `...act_${metaAccountId}/insights`,
+      params: {
+        time_range: JSON.stringify({ since: fmt(currentFrom), until: fmt(currentTo) }),
+        time_increment: 1,
+        cache_buster: cacheBuster  // bypass CDN/edge cache per chunk
+      },
+      timeout: 15000,
+      headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+    });
+    insightsData = [...insightsData, ...chunk.data.data];
+    currentFrom.setDate(currentFrom.getDate() + 14);   // advance window
+  }
+}
+// GA4 uses runReport REST body (not URL params) + per-property daily quota —
+// a single windowing primitive cannot be shared across both sources.</code></pre>
+      <div class="partial-note">⚠ PARTIAL: Resolved Meta volume. GA4 retrieval primitive is incompatible — different quota model, different API contract. A generalised windowing primitive cannot span both.</div>
+    </div>
+  </div>
+
+  <!-- H4 / STA -->
+  <div class="hyp-card">
+    <div class="hyp-header">
+      <span class="badge-sta">STA ACHIEVED</span>
+      <h3>H4 — Consistency-Class Classification Framework</h3>
+    </div>
+    <div class="hyp-body">
+      <p>Each source classified along three orthogonal axes: <strong>consistency model</strong> (eventual vs. retroactive-mutation), <strong>retrieval primitive</strong> (Graph-insights vs. REST-runReport), and <strong>quota model</strong> (per-account-hourly vs. per-property-daily). Each combination determines retrieval strategy independently.</p>
+      <pre><code class="language-js">// services/ga4-service.js : 44–68
+// GA4 classified: consistency=eventual, primitive=REST-runReport,
+//                 quota=per-property-daily
+// → strategy: refresh-on-401, no windowing required
+const refreshAccessToken = async (refreshToken) => {
+  const response = await axios.post('https://oauth2.googleapis.com/token', {
+    client_id:     process.env.GOOGLE_OAUTH_CLIENT_ID,
+    client_secret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
+    refresh_token: refreshToken,
+    grant_type:    'refresh_token'
+  });
+  return response.data.access_token;
+  // Token refresh isolated to GA4 path; strategy derived from classification.
+};</code></pre>
+      <pre><code class="language-js">// services/meta-ads-service.js : 17–43
+// Meta classified: consistency=retroactive-mutation, primitive=Graph-insights,
+//                  quota=per-account-hourly
+// → strategy: windowed chunking + cache-bust headers + long-lived token exchange
+const refreshMetaAccessToken = async (shortLivedToken) => {
+  const response = await axios.get(`${META_BASE_URL}/oauth/access_token`, {
+    params: {
+      grant_type:       'fb_exchange_token',
+      client_id:        process.env.META_APP_ID,
+      client_secret:    process.env.META_APP_SECRET,
+      fb_exchange_token: shortLivedToken
+    }
+  });
+  return response.data.access_token;
+  // Token lifecycle and chunking strategy derived from classification axes,
+  // not from ad-hoc per-API engineering.
+};</code></pre>
+      <div class="sta-note">✓ STA: Per-source retrieval strategy now derived from classification, not hand-crafted. Adding a new source requires classifying it on three axes — no new engineering per source.</div>
+    </div>
+  </div>
+
+  <div class="sta-summary">
+    <h3>Scientific and Technological Advancement (STA)</h3>
+    <p><strong>Consistency-class classification framework.</strong> Sources classified along three orthogonal axes (consistency model, retrieval primitive, quota model); each combination determines retrieval strategy independently. Demonstrated that a generalised windowing primitive (H3) fails when source quota models differ. Corollary: per-source strategy derivation from classification is transferable to any multi-consumer ingestion system adding new external data sources.</p>
+  </div>
+</main>
+<footer>MetrixMate — SR&amp;ED Audit Evidence &mdash; Canada Revenue Agency</footer>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark'});</script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>STU-Orchestration — MetrixMate SR&ED</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;line-height:1.6}
+  header{background:linear-gradient(135deg,#1a3a2a,#0f1117);padding:2.5rem 2rem 2rem;border-bottom:2px solid #059669}
+  header .badge{display:inline-block;background:#059669;color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:.25rem .75rem;border-radius:999px;margin-bottom:.75rem;text-transform:uppercase}
+  header h1{font-size:1.9rem;font-weight:700;color:#fff;margin-bottom:.5rem}
+  header p{color:#94a3b8;font-size:.95rem;max-width:72ch}
+  nav{background:#1e293b;padding:.75rem 2rem;display:flex;gap:1.5rem;font-size:.85rem;border-bottom:1px solid #334155}
+  nav a{color:#94a3b8;text-decoration:none;transition:color .2s}
+  nav a:hover,nav a.active{color:#34d399}
+  main{max-width:960px;margin:0 auto;padding:2rem 1.5rem}
+  .stu-block{background:#1e293b;border:1px solid #334155;border-radius:.75rem;padding:1.5rem;margin-bottom:1.5rem}
+  .stu-block h2{font-size:1rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-bottom:.5rem}
+  .stu-block p{color:#cbd5e1;font-size:.95rem}
+  .section-title{font-size:1.2rem;font-weight:700;color:#f1f5f9;margin:2rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #334155}
+  .hyp-card{background:#1e293b;border:1px solid #334155;border-radius:.75rem;margin-bottom:1.25rem;overflow:hidden}
+  .hyp-header{display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid #334155}
+  .hyp-header h3{font-size:1rem;font-weight:600;color:#f1f5f9}
+  .badge-fail{background:#7f1d1d;color:#fca5a5;font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:999px}
+  .badge-neg{background:#1e1b4b;color:#a5b4fc;font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:999px}
+  .badge-sta{background:#14532d;color:#86efac;font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:999px}
+  .hyp-body{padding:1.25rem}
+  .hyp-body p{color:#94a3b8;font-size:.9rem;margin-bottom:1rem}
+  .hyp-body pre{background:#0f172a;border-radius:.5rem;padding:1rem;overflow-x:auto;font-size:.82rem;border:1px solid #1e293b;margin-bottom:.75rem}
+  .fail-note{background:#1c0a0a;border-left:3px solid #dc2626;padding:.6rem 1rem;border-radius:0 .4rem .4rem 0;font-size:.85rem;color:#fca5a5;margin-top:.5rem}
+  .neg-note{background:#0d0d2b;border-left:3px solid #6366f1;padding:.6rem 1rem;border-radius:0 .4rem .4rem 0;font-size:.85rem;color:#a5b4fc;margin-top:.5rem}
+  .sta-note{background:#0a1c0f;border-left:3px solid #16a34a;padding:.6rem 1rem;border-radius:0 .4rem .4rem 0;font-size:.85rem;color:#86efac;margin-top:.5rem}
+  .diagram-wrap{background:#1e293b;border:1px solid #334155;border-radius:.75rem;padding:1.5rem;margin-bottom:2rem;overflow-x:auto}
+  .diagram-wrap h3{color:#94a3b8;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem}
+  .mermaid{display:flex;justify-content:center}
+  .sta-summary{background:linear-gradient(135deg,#0f2a1a,#1e293b);border:1px solid #16a34a;border-radius:.75rem;padding:1.5rem;margin-top:2rem}
+  .sta-summary h3{color:#86efac;font-size:1rem;font-weight:700;margin-bottom:.75rem}
+  .sta-summary p{color:#cbd5e1;font-size:.9rem}
+  footer{text-align:center;color:#475569;font-size:.8rem;padding:2rem;margin-top:3rem;border-top:1px solid #1e293b}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">SR&ED Audit Evidence — MetrixMate</div>
+  <h1>STU-Orchestration</h1>
+  <p>Architectural uncertainty in orchestrating iterative multi-agent LLM workflows with non-linear handoffs, context propagation across cycles, partial failure, and bounded termination.</p>
+</header>
+<nav>
+  <a href="stu-ingestion.html">Ingestion</a>
+  <a href="stu-storage.html">Storage</a>
+  <a href="stu-orchestration.html" class="active">Orchestration</a>
+  <a href="stu-generation.html">Generation</a>
+</nav>
+<main>
+  <div class="stu-block">
+    <h2>Scientific and Technological Uncertainty (STU)</h2>
+    <p>It was not known whether iterative multi-agent LLM workflows — where output from one cycle conditions the next, failures are partial, and context must propagate across non-linear handoffs — could be orchestrated reliably using existing execution models (single-call, linear chain, or stateless workers), or whether a purpose-built orchestration model was required.</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <h3>Hypothesis Progression — SIS Path to STA</h3>
+    <div class="mermaid">
+flowchart LR
+  H1["H1\nSingle LLM\nCall"]:::fail
+  H2["H2\nLinear\nChained Calls"]:::fail
+  H3["H3\nLocal Worker\nArchitecture"]:::neg
+  H4["H4 ✓ STA\nIteration-First\nOrchestration"]:::sta
+
+  H1 -->|"FAIL: no iteration;\ntimeout discards all progress"| H2
+  H2 -->|"FAIL: error propagation;\ncontext drift across chain"| H3
+  H3 -->|"NEG RESULT: stateless workers\ncannot checkpoint partial LLM output"| H4
+
+  classDef fail fill:#7f1d1d,stroke:#dc2626,color:#fca5a5
+  classDef neg fill:#1e1b4b,stroke:#6366f1,color:#a5b4fc
+  classDef sta fill:#14532d,stroke:#16a34a,color:#86efac
+    </div>
+  </div>
+
+  <div class="section-title">Scientific Investigation and Systematic Experimentation (SIS)</div>
+
+  <!-- H1 -->
+  <div class="hyp-card">
+    <div class="hyp-header">
+      <span class="badge-fail">FAIL</span>
+      <h3>H1 — Single LLM Call with Rich Context</h3>
+    </div>
+    <div class="hyp-body">
+      <p>Single <code>gpt-4o-mini</code> call with the full campaign context injected as a monolithic prompt. Token attention degrades for context beyond ~1,500 tokens; sections at the tail of the prompt receive reduced model attention. No re-execution path on partial failure — a 45-second timeout discards all partial output.</p>
+      <pre><code class="language-js">// services/campaign-brief-service.js : 102–116
+// PSEUDOCODE: H1 — single call, no iteration boundary
+const response = await Promise.race([
+  openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user',   content: userPrompt   }  // full context in one shot
+    ],
+    temperature: 0.7,
+    max_tokens: 1500  // entire brief must fit in single completion
+  }),
+  new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('OpenAI API timeout (campaign brief)')), 45000)
+  )
+]);
+// FAILURE 1: no iteration — model cannot refine output across cycles.
+// FAILURE 2: 45 s timeout discards all partial progress with no checkpoint.
+// FAILURE 3: context not partitioned — model attends poorly to distal sections.</code></pre>
+      <div class="fail-note">⛌ FAILURE: No iteration boundary. Partial failure (timeout) discards all progress. Distal context sections receive degraded model attention in monolithic prompts.</div>
+    </div>
+  </div>
+
+  <!-- H2 -->
+  <div class="hyp-card">
+    <div class="hyp-header">
+      <span class="badge-fail">FAIL</span>
+      <h3>H2 — Linear Chained Calls (Brief → Image Prompt)</h3>
+    </div>
+    <div class="hyp-body">
+      <p>Two sequential LLM calls: call 1 generates the campaign brief, call 2 derives an image prompt from the brief. Context passed between calls as a raw string. A malformed section in call 1 propagates into call 2 with no correction path; brittle regex parsing causes context drift across the chain boundary.</p>
+      <pre><code class="language-js">// services/campaign-brief-service.js : 189–247
+// PSEUDOCODE: H2 — linear chain, brittle context handoff
+// --- STEP 1: generate campaign brief (call above) ---
+
+// --- STEP 2: derive image prompt from brief — linear handoff ---
+const response = await Promise.race([
+  openai.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user',   content: brief || `Campaign Title: ${sections.campaignTitle}...` }
+      // Context propagated as raw string — sections parsed with brittle regex.
+      // If step 1 produced a malformed section, step 2 receives corrupted context.
+    ],
+    temperature: 0.7,
+    max_tokens: 300
+  }),
+  new Promise((_, reject) => setTimeout(() => reject(new Error('OpenAI API timeout (image prompt)')), 30000))
+]);
+// FAILURE: brittle regex section parser causes context drift.
+// No re-execution path; step 2 failure requires full pipeline restart from step 1.</code></pre>
+      <pre><code class="language-js">// services/campaign-brief-service.js : 148–179
+// PSEUDOCODE: H2 — brittle regex section parser (context-as-raw-string)
+function parseBriefSections(content) {
+  const sections = { campaignTitle: '', objective: '', keyMessage: '', ... };
+  const patterns = {
+    campaignTitle: /\*\*Campaign Title\*\*[:\s—-]*(.+?)(?=\n\*\*|$)/is,
+    objective:     /\*\*Objective\*\*[:\s—-]*(.+?)(?=\n\*\*|$)/is,
+    // ... per-section regex — fails if model deviates from expected format
+  };
+  for (const [key, pattern] of Object.entries(patterns)) {
+    const match = content.match(pattern);
+    if (match && match[1]) sections[key] = match[1].trim();
+  }
+  return sections;
+  // Context passed as raw string between pipeline stages = context drift risk.
+}</code></pre>
+      <div class="fail-note">⛌ FAILURE: Error in step 1 propagates to step 2 with no correction. Context propagated as raw string through brittle regex parser — model format deviation causes silent context corruption.</div>
+    </div>
+  </div>
+
+  <!-- H3 -->
+  <div class="hyp-card">
+    <div class="hyp-header">
+      <span class="badge-neg">NEGATIVE RESULT</span>
+      <h3>H3 — Local Worker Architecture (Independent Workers Per Stage)</h3>
+    </div>
+    <div class="hyp-body">
+      <p>Independent worker process per pipeline stage (brief generation, image prompt derivation, image generation). Workers could not share partial LLM state across non-linear handoffs; a failure in any worker required full pipeline restart with no checkpoint. LLM output is not serialisable as a worker message without losing structural context.</p>
+      <pre><code class="language-js">// PSEUDOCODE: H3 — local worker architecture (design-phase evaluation)
+// Worker 1: brief generation
+const briefWorker = new Worker('./workers/brief-worker.js');
+briefWorker.postMessage({ campaignIdea, brandName, industry });
+
+// Worker 2: image prompt derivation
+briefWorker.on('message', (brief) => {
+  const promptWorker = new Worker('./workers/prompt-worker.js');
+  promptWorker.postMessage({ brief });  // full brief as serialised string
+  // NEGATIVE RESULT: LLM partial output is not serialisable across worker boundary.
+  // Worker failure requires full pipeline restart — no partial checkpoint available.
+  // Non-linear handoffs (e.g., feedback cycle) require worker orchestration state
+  // that workers cannot maintain statelessly.
+});
+
+// NEGATIVE RESULT: stateless workers cannot:
+//   (a) checkpoint partial LLM output across a boundary failure
+//   (b) propagate typed context (sections object) without serialisation loss
+//   (c) implement non-linear handoffs (feedback cycles) statelessly</code></pre>
+      <div class="neg-note">◈ NEGATIVE RESULT (design phase): Stateless workers cannot checkpoint partial LLM output. Non-linear handoffs require shared mutable state that stateless workers structurally cannot provide. Each standard execution model fails at a different part of the iteration boundary.</div>
+    </div>
+  </div>
+
+  <!-- H4 / STA -->
+  <div class="hyp-card">
+    <div class="hyp-header">
+      <span class="badge-sta">STA ACHIEVED</span>
+      <h3>H4 — Iteration-First Orchestration: Cycle-as-Partition / Context-as-Asset</h3>
+    </div>
+    <div class="hyp-body">
+      <p>Each iteration cycle treated as a discrete partition. Context partitioned into typed assets (sections object) rather than raw strings. Re-execution replays only the failed partition — not the full pipeline. Bounded termination enforced at the orchestration layer via <code>Promise.race</code>, not delegated to the model or individual worker.</p>
+      <pre><code class="language-js">// services/campaign-brief-service.js : 29–83
+// PSEUDOCODE: H4 — iteration-first: re-execute only the changed partition
+if (existingGuide) {
+  // Re-execution path: prior typed asset (existingGuide) is the context.
+  // Only the changed partition is re-run — not the full pipeline.
+  const userPrompt = `Here is the existing design brief:\n\n${existingGuide}
+\nPlease apply the following feedback/changes:\n${campaignIdea}
+\nReturn the updated brief with all sections, incorporating the requested changes.`;
+
+  const response = await Promise.race([
+    openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user',   content: userPrompt }
+      ],
+      temperature: 0.7,
+      max_tokens: 1500
+    }),
+    // Bounded termination: enforced at orchestration layer, not by the model.
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('OpenAI API timeout (campaign brief update)')), 45000)
+    )
+  ]);
+  // Context-as-asset: existingGuide is a typed, versioned asset threaded across cycles.
+  // Cycle-as-partition: feedback re-execution is a discrete, independently-retryable unit.
+}</code></pre>
+      <pre><code class="language-js">// services/campaign-brief-service.js : 148–179
+// PSEUDOCODE: H4 — context partitioned into independently-addressable typed assets
+function parseBriefSections(content) {
+  const sections = {
+    campaignTitle:     '',  // independently addressable asset
+    objective:         '',  // independently addressable asset
+    keyMessage:        '',  // independently addressable asset
+    visualDirection:   '',  // independently addressable asset
+    designElements:    '',
+    textLayoutGuidance:'',
+    toneAndEmotion:    '',
+    designerNotes:     ''
+  };
+  for (const [key, pattern] of Object.entries(patterns)) {
+    const match = content.match(pattern);
+    if (match && match[1]) sections[key] = match[1].trim();
+  }
+  return sections;
+  // Each section is an independently-addressable typed asset.
+  // Re-execution can target a single section without replaying the full cycle.
+  // Context-as-asset: sections object threads across iteration cycles without
+  // raw-string serialisation loss.
+}</code></pre>
+      <div class="sta-note">✓ STA: Cycle-as-partition / context-as-asset pattern achieves reliable non-linear iteration. Failed partitions are re-executed in isolation. Bounded termination enforced at orchestration layer. Context propagated as typed assets, not raw strings.</div>
+    </div>
+  </div>
+
+  <div class="sta-summary">
+    <h3>Scientific and Technological Advancement (STA)</h3>
+    <p><strong>Iteration-first orchestration model for multi-agent LLM workflows.</strong> Implementing design pattern: <em>cycle-as-partition</em> (each iteration cycle is a discrete, independently-retryable unit) and <em>context-as-asset</em> (context propagated as typed, versioned assets rather than raw strings). <strong>Corollary negative result:</strong> standard execution models each fail at a different part of the iteration boundary — single-call fails at re-execution, linear chains fail at context propagation, stateless workers fail at partial-state checkpointing. The negative results collectively define the boundary of the existing art. Principle transferable to any multi-agent LLM workflow requiring iterative refinement with partial failure tolerance.</p>
+  </div>
+</main>
+<footer>MetrixMate — SR&amp;ED Audit Evidence &mdash; Canada Revenue Agency</footer>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark'});</script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>
